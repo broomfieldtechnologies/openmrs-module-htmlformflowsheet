@@ -47,7 +47,8 @@ public class HtmlEncounterChartContentController implements Controller {
 
     private Log log = LogFactory.getLog(this.getClass());
     
-    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @SuppressWarnings("deprecation")
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         
         ModelMap model = new ModelMap();
         Integer patientId;

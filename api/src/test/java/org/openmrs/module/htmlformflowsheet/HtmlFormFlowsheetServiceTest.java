@@ -51,7 +51,7 @@ public class HtmlFormFlowsheetServiceTest extends BaseModuleContextSensitiveTest
         encounter.setPatient(patient);
         encounter.setUuid(java.util.UUID.randomUUID().toString());
         encounter.setLocation(Context.getLocationService().getLocation(1));
-        encounter.setProvider(Context.getUserService().getUser(1));
+        //encounter(Context.getUserService().getUser(1));
         
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -64,7 +64,7 @@ public class HtmlFormFlowsheetServiceTest extends BaseModuleContextSensitiveTest
         dord.setDrug(drug1);
         dord.setCreator(Context.getAuthenticatedUser());
         dord.setVoided(false);
-        dord.setStartDate(thirtyDaysAgo);
+        //dord.setStartDate(thirtyDaysAgo);
         encounter.addOrder(dord);
         
         Encounter enc = Context.getEncounterService().saveEncounter(encounter);
@@ -142,7 +142,7 @@ public class HtmlFormFlowsheetServiceTest extends BaseModuleContextSensitiveTest
         encounter.setPatient(patient);
         encounter.setUuid(java.util.UUID.randomUUID().toString());
         encounter.setLocation(Context.getLocationService().getLocation(1));
-        encounter.setProvider(Context.getUserService().getUser(1));
+        //encounter.setProvider(Context.getUserService().getUser(1));
         
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -159,7 +159,7 @@ public class HtmlFormFlowsheetServiceTest extends BaseModuleContextSensitiveTest
         dord.setDrug(drug1);
         dord.setCreator(Context.getAuthenticatedUser());
         dord.setVoided(false);
-        dord.setStartDate(thirtyDaysAgo);
+        //dord.setStartDate(thirtyDaysAgo);
         encounter.addOrder(dord);
         Encounter enc = Context.getEncounterService().saveEncounter(encounter);
         Integer dordId = enc.getOrders().iterator().next().getOrderId();
@@ -168,7 +168,8 @@ public class HtmlFormFlowsheetServiceTest extends BaseModuleContextSensitiveTest
         
         List<Encounter> encs = new ArrayList<Encounter>();
         
-        List<Order> allOrders = Context.getOrderService().getOrdersByPatient(patient);
+        List<Order> allOrders = null;
+        //Context.getOrderService().getOrdersByPatient(patient);
         //System.out.println("///////   ALL DRUG ORDERS ////////////");
         for (Order o: allOrders){
             if (o instanceof DrugOrder){
