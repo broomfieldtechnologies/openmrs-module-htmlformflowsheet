@@ -126,7 +126,8 @@ public class HtmlFormFlowsheetDWR {
         List<HtmlFormFlowsheetDWREncounterObj> ret = new ArrayList<HtmlFormFlowsheetDWREncounterObj>();
         EncounterType et = Context.getEncounterService().getEncounterType(encTypeId);
         Patient p = Context.getPatientService().getPatient(patientId);
-        List<Encounter> eList = Context.getEncounterService().getEncounters(p, null, null, null, null, Collections.singletonList(et), null, false);
+		List<Encounter> eList = Context.getEncounterService().getEncounters(p, null, null, null,
+		    null, Collections.singletonList(et), null, null, null, false);
         eList = HtmlFormFlowsheetUtil.sortEncountersAccordingToGp(eList);
         for (Encounter e : eList){
             HtmlFormFlowsheetDWREncounterObj h = new HtmlFormFlowsheetDWREncounterObj(e);

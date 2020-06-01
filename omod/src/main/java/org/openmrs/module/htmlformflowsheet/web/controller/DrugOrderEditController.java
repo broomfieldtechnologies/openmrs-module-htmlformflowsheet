@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
+import org.openmrs.ConceptNumeric;
 import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.api.context.Context;
@@ -75,10 +76,11 @@ public class DrugOrderEditController  {
          for (Drug drug : ret){
              String drugName = "";
              if (drug.getName() == null)
-                 drugName = drug.getConcept().getBestName(Context.getLocale()).getName();
+				drugName = drug.getConcept().getName(Context.getLocale()).getName();
              else 
                  drugName = drug.getName();
-             drugMap.put(drug, drugName + " (" + drug.getUnits() + ")");
+			ConceptNumeric cn = (ConceptNumeric) (drug.getConcept());
+			drugMap.put(drug, drugName + " (" + cn.getUnits() + ")");
          
          }
          return drugMap;
@@ -180,7 +182,7 @@ public class DrugOrderEditController  {
                     if (Pattern.compile("\\w+-\\w+-\\w+-\\w+-\\w+").matcher(drugNameStr.trim()).matches()) {
                         drug = Context.getConceptService().getDrugByUuid(drugNameStr.trim());
                     } else {
-                        drug = Context.getConceptService().getDrugByNameOrId(drugNameStr.trim());           
+				drug = Context.getConceptService().getDrug(drugNameStr.trim());
                     }
                     if (drug == null){
                         dor.setVoided(true);
@@ -208,11 +210,12 @@ public class DrugOrderEditController  {
                         throw new RuntimeException(ex);
                     }
                 } 
-            
-                if (!OpenmrsUtil.nullSafeEquals(frequency, dor.getFrequency())){
-                    dor.setFrequency(frequency);
-                    shouldSave = true;
-                }
+   
+                //TODO - please fix this
+//                if (!OpenmrsUtil.nullSafeEquals(frequency, dor.getFrequency().getDescription())) {
+//                    dor.setFrequency(frequency);
+//                    shouldSave = true;
+//                }
                 SimpleDateFormat sdf = Context.getDateFormat();
                 Date startDate = null;
                 try {
@@ -222,8 +225,8 @@ public class DrugOrderEditController  {
                 }
                 if (startDate == null)
                     throw new RuntimeException("You can't create a drug order without a start date.");
-                if (!OpenmrsUtil.nullSafeEquals(startDate, dor.getStartDate())){
-                    dor.setStartDate(startDate);
+		if (!OpenmrsUtil.nullSafeEquals(startDate, dor.getEffectiveStartDate())) {
+                    dor.setScheduledDate(startDate);
                     shouldSave = true;
                 }
                 
@@ -233,8 +236,8 @@ public class DrugOrderEditController  {
                 } catch (Exception ex){
                     
                 }
-                if (!OpenmrsUtil.nullSafeEquals(discontinedDate, dor.getDiscontinuedDate())){
-                    dor.setDiscontinuedDate(discontinedDate);
+		if (!OpenmrsUtil.nullSafeEquals(discontinedDate, dor.getEffectiveStopDate())) {
+			dor.setDateVoided(discontinedDate);
                     shouldSave = true;
                 }
                 
@@ -251,13 +254,15 @@ public class DrugOrderEditController  {
                 
                 if (discontinueReason != null && !discontinueReason.equals("")){
                     Concept discReason = Context.getConceptService().getConcept(Integer.valueOf(discontinueReason));
-                    if (!OpenmrsUtil.nullSafeEquals(discReason, dor.getDiscontinuedReason())){
-                        dor.setDiscontinuedReason(discReason);
-                        shouldSave = true;
-                    }
+			//                    TODO - please fix this
+			//                    if (!OpenmrsUtil.nullSafeEquals(discReason, dor.getVoidedBy())) 
+			//                    {
+			//                    	dor.setVoidedBy(discReason);
+			//                        shouldSave = true;
+			//                    }
                 
-                } else if (discontinueReason == null || discontinueReason.equals("") && dor.getDiscontinuedReason() != null){
-                    dor.setDiscontinuedReason(null);
+		} else if (discontinueReason == null || discontinueReason.equals("") && dor.getVoidReason() != null) {
+			dor.setVoidReason(null);
                     shouldSave = true;
                 }
                 
@@ -266,10 +271,11 @@ public class DrugOrderEditController  {
                     shouldSave = true;
                 }
                 
-                if (!OpenmrsUtil.nullSafeEquals(prn, dor.getPrn())){
-                    dor.setPrn(prn);
-                    shouldSave = true;
-                }
+		//                TODO - please fix this
+		//                if (!OpenmrsUtil.nullSafeEquals(prn, dor.getPrn())){
+		//                    dor.setPrn(prn);
+		//                    shouldSave = true;
+		//                }
                 
                 if (!OpenmrsUtil.nullSafeEquals(voided, dor.getVoided())){
                     dor.setVoided(voided);
@@ -281,7 +287,7 @@ public class DrugOrderEditController  {
                     shouldSave = true;
                 }
                 if (shouldSave)
-                    Context.getOrderService().saveOrder(dor);
+			Context.getOrderService().saveOrder(dor);
                     
                 return "redirect:/module/htmlformflowsheet/closeDialog.form?dialogToClose=" + closeAfterSubmission;
       
