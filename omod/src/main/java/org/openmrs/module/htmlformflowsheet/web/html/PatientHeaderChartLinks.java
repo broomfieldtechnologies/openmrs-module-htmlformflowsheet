@@ -63,7 +63,8 @@ public class PatientHeaderChartLinks extends Extension {
 	            }
 	            Form form = HtmlFormFlowsheetUtil.getFormFromString(formId);
 	            List<PatientProgram> pps = Context.getProgramWorkflowService().getPatientPrograms(p, null, null, null, null, null, false);
-	            List<Encounter> encs = Context.getEncounterService().getEncounters(p, null, null, null, Collections.singletonList(form), null, null, false);
+				List<Encounter> encs = Context.getEncounterService().getEncounters(p, null, null, null,
+				    Collections.singletonList(form), null, null, null, null, false);
 
 //	            for (Map.Entry<Integer, Set<Integer>> m : progForms.entrySet()){
 //	            	System.out.println(m.getKey()+ ":" + m.getValue());

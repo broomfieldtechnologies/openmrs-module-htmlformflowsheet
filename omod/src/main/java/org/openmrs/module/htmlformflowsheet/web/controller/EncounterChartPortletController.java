@@ -17,7 +17,7 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformflowsheet.HtmlFormFlowsheetUtil;
-import org.openmrs.util.OpenmrsConstants;
+import org.openmrs.util.PrivilegeConstants;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -85,7 +85,8 @@ public class EncounterChartPortletController extends PortletController {
                 Integer patientId = (Integer) o;
                 if (!model.containsKey("patient")) {
                     // we can't continue if the user can't view patients
-                    if (Context.hasPrivilege(OpenmrsConstants.PRIV_VIEW_PATIENTS)) {
+					//                    if (Context.hasPrivilege(OpenmrsConstants.PRIV_VIEW_PATIENTS)) {
+					if (Context.hasPrivilege(PrivilegeConstants.GET_PATIENTS)) {
                         Patient p = Context.getPatientService().getPatient(patientId);
                         model.put("patient", p);
                         
@@ -94,7 +95,8 @@ public class EncounterChartPortletController extends PortletController {
 //                        if (Context.hasPrivilege(OpenmrsConstants.PRIV_VIEW_ENCOUNTERS) && p != null)
 //                            model.put("patientEncounters", Context.getEncounterService().getEncountersByPatient(p));
 //                        
-                        if (Context.hasPrivilege(OpenmrsConstants.PRIV_VIEW_OBS) && p != null) {
+						//                        if (Context.hasPrivilege(OpenmrsConstants.PRIV_VIEW_OBS) && p != null) {
+						if (Context.hasPrivilege(PrivilegeConstants.ADD_ENCOUNTERS) && p != null) {
 //                            List<Obs> patientObs = Context.getObsService().getObservationsByPerson(p);
 //                            //TODO:  likewise, are all patient Obs necessary?
 //                            model.put("patientObs", patientObs);

@@ -287,7 +287,8 @@ public class DrugOrderEditController  {
                     shouldSave = true;
                 }
                 if (shouldSave)
-			Context.getOrderService().saveOrder(dor);
+			//                	TODO - need to fix
+			//			Context.getOrderService().saveOrder(dor);
                     
                 return "redirect:/module/htmlformflowsheet/closeDialog.form?dialogToClose=" + closeAfterSubmission;
       

@@ -1,5 +1,17 @@
 package org.openmrs.module.htmlformflowsheet.web.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -8,15 +20,9 @@ import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
-import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.Visit;
-import org.openmrs.VisitType;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformentry.FormEntryContext.Mode;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -26,30 +32,15 @@ import org.openmrs.module.htmlformentry.schema.DrugOrderAnswer;
 import org.openmrs.module.htmlformentry.schema.DrugOrderField;
 import org.openmrs.module.htmlformentry.schema.HtmlFormField;
 import org.openmrs.module.htmlformentry.schema.HtmlFormSchema;
-import org.openmrs.module.htmlformentry.schema.HtmlFormSection;
 import org.openmrs.module.htmlformentry.schema.ObsField;
 import org.openmrs.module.htmlformentry.schema.ObsFieldAnswer;
 import org.openmrs.module.htmlformentry.schema.ObsGroup;
-import org.openmrs.module.htmlformentry.web.controller.HtmlFormEntryController;
 import org.openmrs.module.htmlformflowsheet.HtmlFormFlowsheetService;
 import org.openmrs.module.htmlformflowsheet.HtmlFormFlowsheetUtil;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class HtmlEncounterChartContentController implements Controller {
 
@@ -73,23 +64,23 @@ public class HtmlEncounterChartContentController implements Controller {
         }
         Integer encounterTypeId = Integer.valueOf(request.getParameter("encounterTypeId"));
         String formId = request.getParameter("formId");
-        String addAnotherButtonLabel = (String) request.getParameter("addAnotherButtonLabel");
+        String addAnotherButtonLabel = request.getParameter("addAnotherButtonLabel");
         if (addAnotherButtonLabel != null && !addAnotherButtonLabel.equals("") && !addAnotherButtonLabel.equals("null")){
             model.put("addAnotherButtonLabel", addAnotherButtonLabel); 
         }    
-        String showHtmlFormInsteadStr = (String) request.getParameter("showHtmlFormInstead");
+        String showHtmlFormInsteadStr = request.getParameter("showHtmlFormInstead");
         String showHtmlFormInstead = "false";
         if (showHtmlFormInsteadStr != null && showHtmlFormInsteadStr.equals("true"))
             showHtmlFormInstead = "true";
         model.put("showHtmlFormInstead", showHtmlFormInstead);
-        String windowHeight = (String) request.getParameter("windowHeight");
+        String windowHeight = request.getParameter("windowHeight");
         if (windowHeight == null || windowHeight.equals("") || windowHeight.equals("null"))
             windowHeight = "400";
         model.put("windowHeight", Integer.valueOf(windowHeight));
 
-		if ("true".equals((String)request.getParameter("showProvider"))) {
+		if ("true".equals(request.getParameter("showProvider"))) {
         	model.put("showProvider", true);
-        	model.put("providerHeader", (String)request.getParameter("providerHeader"));
+        	model.put("providerHeader", request.getParameter("providerHeader"));
         }
         else {
         	model.put("showProvider", false);
@@ -130,7 +121,8 @@ public class HtmlEncounterChartContentController implements Controller {
         } else {
             // map from encounterTypeId to list of encounters of that type 
             EncounterType et = Context.getEncounterService().getEncounterType(encounterTypeId);
-            encs = Context.getEncounterService().getEncounters(patient, null, null, null, null, Collections.singleton(et), null, false);
+			encs = Context.getEncounterService().getEncounters(patient, null, null, null, null, Collections.singleton(et),
+			    null, null, null, false);
             model.put("showAllEncsWithEncType", "true");
         } 
 
@@ -150,13 +142,13 @@ public class HtmlEncounterChartContentController implements Controller {
 						c = Context.getConceptService().getConcept(idAsString);
 					}
                     Map<Concept,String> conceptAndNameString = new HashMap<Concept,String>();
-                    conceptAndNameString.put(c, c.getBestShortName(Context.getLocale()).getName());
+					conceptAndNameString.put(c, c.getShortNameInLocale(Context.getLocale()).getName());
                     concepts.add(conceptAndNameString);
                 }
             } else if (form != null) {
                 HtmlForm htmlForm = Context.getService(HtmlFormEntryService.class).getHtmlFormByForm(form);
                 Patient p = (Patient) model.get("patient");
-                FormEntrySession fes = null;
+				//                FormEntrySession fes = null;
                 try {
 					fes = HtmlFormFlowsheetUtil.createFormEntrySession(p, null, Mode.VIEW, htmlForm, null, null);
                     String htmlToDisplay = fes.getHtmlToDisplay();
@@ -228,7 +220,7 @@ public class HtmlEncounterChartContentController implements Controller {
     
                 if (encDummy == null){
                     encDummy = new Encounter();
-                    encDummy.setEncounterDatetime(doTmp.getStartDate());
+					encDummy.setEncounterDatetime(doTmp.getEffectiveStartDate());
                     Context.evictFromSession(encDummy);
                 }
                 encDummy.addOrder(doTmp);
