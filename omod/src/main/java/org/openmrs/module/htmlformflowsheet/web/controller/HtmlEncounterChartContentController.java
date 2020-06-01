@@ -8,9 +8,15 @@ import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
+import org.openmrs.Visit;
+import org.openmrs.VisitType;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformentry.FormEntryContext.Mode;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -35,7 +41,9 @@ import org.springframework.web.servlet.mvc.Controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -51,15 +59,17 @@ public class HtmlEncounterChartContentController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         
         ModelMap model = new ModelMap();
+        FormEntrySession fes = null;
         Integer patientId;
         try {
             patientId = Integer.valueOf(request.getParameter("patientId"));
         } catch (Exception ex){
             log.warn("htmlformflowsheet pulling patientId out of session");
-            FormEntrySession fes = (FormEntrySession)  Context.getVolatileUserData(HtmlFormEntryController.FORM_IN_PROGRESS_KEY);
-            if (fes == null || fes.getPatient() == null)
+            //FormEntrySession fes = (FormEntrySession)  Context.getVolatileUserData(HtmlFormEntryController.FORM_IN_PROGRESS_KEY);
+            Patient patient = Context.getPatientService().getPatient(patientId);
+            if (patient == null )
             		throw new RuntimeException("Unable to pull patientId out of URL.  Please verify patientId in the url you're using to access this page.");
-            patientId = fes.getPatient().getPatientId();
+            patientId = patient.getId();
         }
         Integer encounterTypeId = Integer.valueOf(request.getParameter("encounterTypeId"));
         String formId = request.getParameter("formId");
@@ -110,7 +120,8 @@ public class HtmlEncounterChartContentController implements Controller {
         String showAllEncsWithEncType = request.getParameter("showAllEncsWithEncType");
         if (showAllEncsWithEncType == null || !showAllEncsWithEncType.equals("true")){
             //if showAllEncsWithEncType is false or null then restrict encounters by formId
-            encs = Context.getEncounterService().getEncounters(patient, null, null, null, Collections.singleton(form), null, null, false);
+
+            encs = Context.getEncounterService().getEncounters(patient, null, null, null, Collections.singleton(form), null, null,null, null, false);
             model.put("showAllEncsWithEncType", "false");
         }   else if ("*".equals(model.get("encounterTypeId"))) {
             //show all encounters
