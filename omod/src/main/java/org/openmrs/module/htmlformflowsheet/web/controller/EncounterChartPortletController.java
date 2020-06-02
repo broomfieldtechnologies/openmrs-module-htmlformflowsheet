@@ -94,9 +94,9 @@ public class EncounterChartPortletController extends PortletController {
                         // add encounters if this user can view them
 //                        if (Context.hasPrivilege(OpenmrsConstants.PRIV_VIEW_ENCOUNTERS) && p != null)
 //                            model.put("patientEncounters", Context.getEncounterService().getEncountersByPatient(p));
-//                        
+//                        //TODO BFT
 						//                        if (Context.hasPrivilege(OpenmrsConstants.PRIV_VIEW_OBS) && p != null) {
-						if (Context.hasPrivilege(PrivilegeConstants.ADD_ENCOUNTERS) && p != null) {
+						if (Context.hasPrivilege(PrivilegeConstants.GET_OBS) && p != null) {
 //                            List<Obs> patientObs = Context.getObsService().getObservationsByPerson(p);
 //                            //TODO:  likewise, are all patient Obs necessary?
 //                            model.put("patientObs", patientObs);

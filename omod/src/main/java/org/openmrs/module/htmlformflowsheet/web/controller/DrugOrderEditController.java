@@ -254,12 +254,17 @@ public class DrugOrderEditController  {
                 
                 if (discontinueReason != null && !discontinueReason.equals("")){
                     Concept discReason = Context.getConceptService().getConcept(Integer.valueOf(discontinueReason));
-			//                    TODO - please fix this
-			//                    if (!OpenmrsUtil.nullSafeEquals(discReason, dor.getVoidedBy())) 
-			//                    {
-			//                    	dor.setVoidedBy(discReason);
-			//                        shouldSave = true;
-			//                    }
+			//                    TODO - BFT please fix this
+//			                    if (!OpenmrsUtil.nullSafeEquals(discReason, dor.getVoidedBy())) 
+//			                    {
+//			                    	dor.setVoidedBy(discReason);
+//			                        shouldSave = true;
+//			                    }
+                    if (!OpenmrsUtil.nullSafeEquals(discReason.getDisplayString(), dor.getVoidedBy().getDisplayString())) 
+                    {
+                    	dor.setVoidedBy(Context.getAuthenticatedUser());
+                        shouldSave = true;
+                    }           
                 
 		} else if (discontinueReason == null || discontinueReason.equals("") && dor.getVoidReason() != null) {
 			dor.setVoidReason(null);
@@ -271,11 +276,11 @@ public class DrugOrderEditController  {
                     shouldSave = true;
                 }
                 
-		//                TODO - please fix this
-		//                if (!OpenmrsUtil.nullSafeEquals(prn, dor.getPrn())){
-		//                    dor.setPrn(prn);
-		//                    shouldSave = true;
-		//                }
+		//                TODO - BFT please fix this
+		                if (!OpenmrsUtil.nullSafeEquals(prn, dor.getAsNeeded())){
+		                    dor.setAsNeeded(prn);
+		                    shouldSave = true;
+		                }
                 
                 if (!OpenmrsUtil.nullSafeEquals(voided, dor.getVoided())){
                     dor.setVoided(voided);
@@ -288,7 +293,8 @@ public class DrugOrderEditController  {
                 }
                 if (shouldSave)
 			//                	TODO - need to fix
-			//			Context.getOrderService().saveOrder(dor);
+                	
+						Context.getOrderService().saveOrder(dor, null);
                     
                 return "redirect:/module/htmlformflowsheet/closeDialog.form?dialogToClose=" + closeAfterSubmission;
       

@@ -51,7 +51,7 @@ public class HtmlEncounterChartContentController implements Controller {
         
         ModelMap model = new ModelMap();
         FormEntrySession fes = null;
-        Integer patientId;
+        Integer patientId = null;
         try {
             patientId = Integer.valueOf(request.getParameter("patientId"));
         } catch (Exception ex){
