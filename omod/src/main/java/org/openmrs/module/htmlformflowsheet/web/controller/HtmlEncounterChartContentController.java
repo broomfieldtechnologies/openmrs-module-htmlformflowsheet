@@ -150,8 +150,8 @@ public class HtmlEncounterChartContentController implements Controller {
                 Patient p = (Patient) model.get("patient");
 				//                FormEntrySession fes = null;
                 try {
-					fes = HtmlFormFlowsheetUtil.createFormEntrySession(p, null, Mode.VIEW, htmlForm, null, null);
-                    String htmlToDisplay = fes.getHtmlToDisplay();
+					fes = HtmlFormFlowsheetUtil.createFormEntrySession(p, null, Mode.ENTER, htmlForm, null, null);
+                    //String htmlToDisplay = fes.getHtmlToDisplay();
                     HtmlFormSchema schema = fes.getContext().getSchema();
                     for (HtmlFormField field : HtmlFormFlowsheetUtil.getAllFields(schema)) {
                         fieldHelper(field, concepts, conceptAnswers, searchDrugs, drugNames);
