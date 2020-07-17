@@ -40,6 +40,7 @@
 		<openMRSMinorVersion>2.3</openMRSMinorVersion>
 		<htmlformentryVersion>3.8.0</htmlformentryVersion>
 		<legacyuiVersion>1.5.0</legacyuiVersion>
+        <javaxServletVersion>3.0.1</javaxServletVersion>
 	</properties>
 
 	<dependencies>
@@ -86,19 +87,19 @@
             <type>pom</type>
 			<scope>test</scope>
 		</dependency>
-		        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
-            <scope>compile</scope>
-        </dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javaxServletVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
         <!-- https://mvnrepository.com/artifact/javax.servlet/jsp-api -->
-<dependency>
-    <groupId>javax.servlet</groupId>
-    <artifactId>jsp-api</artifactId>
-    <version>2.0</version>
-    <scope>provided</scope>
-</dependency>
 	</dependencies>
 
 	<build>
